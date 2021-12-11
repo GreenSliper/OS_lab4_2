@@ -1,0 +1,12 @@
+C:\Users\Igor\source\repos\OS_lab4_1\Winapi\bin\Debug\net5.0\Winapi.deps.json
+C:\Users\Igor\source\repos\OS_lab4_1\Winapi\bin\Debug\net5.0\Winapi.dll
+C:\Users\Igor\source\repos\OS_lab4_1\Winapi\bin\Debug\net5.0\ref\Winapi.dll
+C:\Users\Igor\source\repos\OS_lab4_1\Winapi\bin\Debug\net5.0\Winapi.pdb
+C:\Users\Igor\source\repos\OS_lab4_1\Winapi\obj\Debug\net5.0\Winapi.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Igor\source\repos\OS_lab4_1\Winapi\obj\Debug\net5.0\Winapi.AssemblyInfoInputs.cache
+C:\Users\Igor\source\repos\OS_lab4_1\Winapi\obj\Debug\net5.0\Winapi.AssemblyInfo.cs
+C:\Users\Igor\source\repos\OS_lab4_1\Winapi\obj\Debug\net5.0\Winapi.csproj.CoreCompileInputs.cache
+C:\Users\Igor\source\repos\OS_lab4_1\Winapi\obj\Debug\net5.0\Winapi.dll
+C:\Users\Igor\source\repos\OS_lab4_1\Winapi\obj\Debug\net5.0\ref\Winapi.dll
+C:\Users\Igor\source\repos\OS_lab4_1\Winapi\obj\Debug\net5.0\Winapi.pdb
+C:\Users\Igor\source\repos\OS_lab4_1\Winapi\obj\Debug\net5.0\Winapi.csprojAssemblyReference.cache
