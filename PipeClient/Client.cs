@@ -21,16 +21,18 @@ namespace PipeClient
 		static IntPtr evt;
 		static IntPtr pipe;
 		static uint bufSz = 512;
-		static unsafe IOCompletionCallback completionCallback = new IOCompletionCallback(Callback);
+		static unsafe IOCompletionCallback completionCallback;
 		static bool connected = false;
 
 		static unsafe void Callback(uint errCode, uint bytes, NativeOverlapped* ov)
 		{
 			Console.WriteLine("Data received!");
 		}
-		static void ConnectPipe()
+		static unsafe void ConnectPipe()
 		{
-			evt = CreateEvent(IntPtr.Zero, false, false, null);
+			if(completionCallback == null)
+				completionCallback += Callback;
+			evt = OpenEvent((uint)EventFlags.EVENT_MODIFY_STATE, true, "myevt");
 			pipe = CreateFile(@"\\.\pipe\mypipe",
 				(uint)DesiredAccess.GENERIC_READ | (uint)DesiredAccess.GENERIC_WRITE,
 				(uint)ShareMode.None,
@@ -49,8 +51,11 @@ namespace PipeClient
 			}
 			overlapped.EventHandle = evt;
 			byte[] buf = new byte[bufSz];
-			if (ReadFileEx(pipe, buf, bufSz, ref overlapped, completionCallback))
+			var res = ReadFileEx(pipe, buf, bufSz, ref overlapped, completionCallback);
+			SleepEx(Constants.INFINITE, true);
+			if (res)
 			{
+				SetEvent(evt);
 				string str = Encoding.UTF8.GetString(buf);
 				Console.WriteLine(str);
 			}

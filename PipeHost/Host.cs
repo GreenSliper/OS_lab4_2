@@ -17,14 +17,22 @@ namespace PipeHost
 				new MenuItem("Disconnect from pipe", DisconnectPipe)
 			});
 
+		static unsafe IOCompletionCallback completionCallback;
+		static unsafe void Callback(uint errCode, uint bytes, NativeOverlapped* ov)
+		{
+			Console.WriteLine("Data written!");
+		}
+
 		static bool pipeCreated = false;
 		static uint outBufSz = 512, inBufSz = 512;
 		static IntPtr pipe;
 		static NativeOverlapped overlapped = new NativeOverlapped();
 		static IntPtr evt;
-		static void CreatePipe()
+		unsafe static void CreatePipe()
 		{
-			evt = CreateEvent(IntPtr.Zero, false, false, null);
+			if (completionCallback == null)
+				completionCallback += Callback;
+			evt = CreateEvent(IntPtr.Zero, false, false, "myevt");
 			pipe = CreateNamedPipe("\\\\.\\pipe\\mypipe",
 				(uint)PipeOpenModeFlags.PIPE_ACCESS_DUPLEX,
 				(uint)PipeModeFlags.PIPE_TYPE_MESSAGE | (uint)PipeModeFlags.PIPE_READMODE_MESSAGE | (uint)PipeModeFlags.PIPE_WAIT,
@@ -58,11 +66,11 @@ namespace PipeHost
 			string str = Console.ReadLine();
 			var outputStr = Encoding.UTF8.GetBytes(str);
 			Array.Resize(ref outputStr, (int)outBufSz);
-			overlapped.EventHandle = evt;
 			fixed(NativeOverlapped* o = &overlapped)
 			{
-				if(WriteFile(pipe, outputStr, outBufSz, out uint written, o) && WaitForSingleObject(evt, 10000) == 0)
-					Console.WriteLine("Message written successfully");
+				var res = WriteFileEx(pipe, outputStr, outBufSz, ref overlapped, completionCallback);
+				if (res	&& WaitForSingleObject(evt, 10000) == 0)
+					Console.WriteLine("Message received successfully");
 				else
 					Console.WriteLine($"Error writing message. Error code {GetLastError()}");
 			} 
