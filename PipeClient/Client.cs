@@ -55,7 +55,6 @@ namespace PipeClient
 			SleepEx(Constants.INFINITE, true);
 			if (res)
 			{
-				SetEvent(evt);
 				string str = Encoding.UTF8.GetString(buf);
 				Console.WriteLine(str);
 			}

@@ -17,12 +17,6 @@ namespace PipeHost
 				new MenuItem("Disconnect from pipe", DisconnectPipe)
 			});
 
-		static unsafe IOCompletionCallback completionCallback;
-		static unsafe void Callback(uint errCode, uint bytes, NativeOverlapped* ov)
-		{
-			Console.WriteLine("Data written!");
-		}
-
 		static bool pipeCreated = false;
 		static uint outBufSz = 512, inBufSz = 512;
 		static IntPtr pipe;
@@ -30,8 +24,6 @@ namespace PipeHost
 		static IntPtr evt;
 		unsafe static void CreatePipe()
 		{
-			if (completionCallback == null)
-				completionCallback += Callback;
 			evt = CreateEvent(IntPtr.Zero, false, false, "myevt");
 			pipe = CreateNamedPipe("\\\\.\\pipe\\mypipe",
 				(uint)PipeOpenModeFlags.PIPE_ACCESS_DUPLEX,
@@ -68,7 +60,7 @@ namespace PipeHost
 			Array.Resize(ref outputStr, (int)outBufSz);
 			fixed(NativeOverlapped* o = &overlapped)
 			{
-				var res = WriteFileEx(pipe, outputStr, outBufSz, ref overlapped, completionCallback);
+				var res = WriteFile(pipe, outputStr, outBufSz, out uint written, o);
 				if (res	&& WaitForSingleObject(evt, 10000) == 0)
 					Console.WriteLine("Message received successfully");
 				else
